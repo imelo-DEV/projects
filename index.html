@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Cadastro & Teste de Status HTTP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 p-8 font-sans">
+    <div class="max-w-4xl mx-auto space-y-8">
+        
+        <header class="border-b border-slate-800 pb-4">
+            <h1 class="text-3xl font-bold text-blue-400">Cadastro de Produtos (QA & Dev Lab)</h1>
+            <p class="text-sm text-slate-400">Validação visual de respostas da API e Status Codes HTTP</p>
+        </header>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Form de Cadastro -->
+            <form id="productForm" class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+                <h2 class="text-lg font-semibold text-slate-200">Novo Produto</h2>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Nome do Produto</label>
+                    <input type="text" id="name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm focus:border-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Categoria</label>
+                    <input type="text" id="category" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm focus:border-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Preço (R$)</label>
+                    <input type="number" step="0.01" id="price" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm focus:border-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Simulação de Autenticação (Header Authorization)</label>
+                    <select id="authSim" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm focus:border-blue-500 outline-none text-slate-300">
+                        <option value="valid">Token Válido (Simula 201)</option>
+                        <option value="invalid">Token Inválido (Simula 403)</option>
+                        <option value="none">Sem Token (Simula 401)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                    <input type="checkbox" id="sim500" class="rounded bg-slate-950 border-slate-800">
+                    <label for="sim500" class="text-xs text-rose-400">Forçar Erro 500 no Servidor</label>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg text-sm transition">
+                    Enviar Requisição (POST)
+                </button>
+            </form>
+
+            <!-- Monitor de Resposta da Requisição -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-semibold text-slate-200 mb-4">Painel de Resposta HTTP</h2>
+                    
+                    <div id="statusBadge" class="hidden inline-block px-3 py-1 rounded-full text-xs font-bold mb-4">
+                        Status Code: <span id="statusCode">-</span>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs overflow-x-auto min-h-[160px]" id="jsonResponse">
+                        <span class="text-slate-600">// Aguardando requisição...</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-slate-800 text-[11px] text-slate-500 space-y-1">
+                    <p>🔵 201: Criado | 🟢 200: OK | ⚪ 204: Deletado</p>
+                    <p>🟡 400: Dado Inválido | 🟠 401/403: Autenticação | 🔴 500: Server Error</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const category = document.getElementById('category').value;
+            const price = document.getElementById('price').value;
+            const authSim = document.getElementById('authSim').value;
+            const sim500 = document.getElementById('sim500').checked;
+
+            // Configuração do Header de Auth
+            let headers = { "Content-Type": "application/json" };
+            if (authSim === 'valid') headers["Authorization"] = "Bearer token-valido-123";
+            if (authSim === 'invalid') headers["Authorization"] = "Bearer token-invalido";
+
+            try {
+                const response = await fetch('http://localhost:3000/api/products', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ name, category, price, triggerError: sim500 })
+                });
+
+                const status = response.status;
+                let data = {};
+                if (status !== 204) {
+                    data = await response.json();
+                }
+
+                // Atualizar UI
+                const statusBadge = document.getElementById('statusBadge');
+                const statusCode = document.getElementById('statusCode');
+                const jsonResponse = document.getElementById('jsonResponse');
+
+                statusBadge.classList.remove('hidden', 'bg-emerald-500/10', 'text-emerald-400', 'bg-rose-500/10', 'text-rose-400', 'bg-amber-500/10', 'text-amber-400');
+                
+                if (status >= 200 && status < 300) {
+                    statusBadge.classList.add('bg-emerald-500/10', 'text-emerald-400');
+                } else if (status >= 400 && status < 500) {
+                    statusBadge.classList.add('bg-amber-500/10', 'text-amber-400');
+                } else {
+                    statusBadge.classList.add('bg-rose-500/10', 'text-rose-400');
+                }
+
+                statusCode.innerText = status;
+                jsonResponse.innerHTML = `<pre class="text-slate-300">${JSON.stringify(data, null, 2)}</pre>`;
+
+            } catch (err) {
+                console.error("Erro na requisição:", err);
+            }
+        });
+    </script>
+</body>
+</html>
