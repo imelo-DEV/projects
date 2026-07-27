@@ -151,8 +151,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test(\"Status é 204 No Content após exclusão\", function () {\r",
-              "    pm.response.to.have.status(204);\r",
+              "pm.test(\"Status é 400 Bad Request\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
               "});"
             ],
             "type": "text/javascript",
@@ -194,8 +194,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test(\"Status é 204 No Content após exclusão\", function () {\r",
-              "    pm.response.to.have.status(204);\r",
+              "pm.test(\"Status é 400 Bad Request\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
               "});"
             ],
             "type": "text/javascript",
@@ -237,8 +237,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test(\"Status é 204 No Content após exclusão\", function () {\r",
-              "    pm.response.to.have.status(204);\r",
+              "pm.test(\"Status é 400 Bad Request\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
               "});"
             ],
             "type": "text/javascript",

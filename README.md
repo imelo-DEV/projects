@@ -10,6 +10,24 @@ Este é um laboratório de testes completo (Full-Stack QA) desenvolvido para val
 
 O projeto conta com uma API Mockada em Node.js, uma interface interativa com Tailwind CSS, automação de interface E2E com Cypress e uma suíte robusta de testes de API no Postman.
 
+---
+
+## 📸 Demonstração do Projeto
+
+### 🧪 1. Automação E2E com Cypress
+Suíte de testes automatizados validando formulários, respostas visuais e tratamento de erros de servidor.
+[![Testes Cypress](docs/cypress.png)](docs/cypress.png)
+
+### 🎨 2. Interface do Painel de Cadastro
+Validação visual das respostas HTTP em tempo real.
+[![Interface do Usuário](docs/interface.png)](docs/interface.png)
+
+### 📬 3. Testes de API e Contrato no Postman
+Execução da suíte HTTP com validação de status codes, headers e tokens de autenticação dinâmicos.
+[![Suíte Postman](docs/postman.png)](docs/postman.png)
+
+---
+
 ## 🎯 Arquitetura do Projeto
 
 * **Backend (API):** Desenvolvido em Node.js com Express para simular o banco de dados em memória e as validações de autorização via JWT (Bearer Token dinâmico).
@@ -17,10 +35,12 @@ O projeto conta com uma API Mockada em Node.js, uma interface interativa com Tai
 * **Automação E2E (Cypress):** Cobertura completa de fluxos de sucesso e exceções na interface, simulando as ações reais do usuário.
 * **Testes de Contrato e API (Postman):** Coleção de testes validando os retornos JSON e a segurança dos endpoints, com gestão de token em variáveis de ambiente.
 
+---
+
 ## 🛠️ Como executar o projeto localmente
 
 ### 1. Clonar e Instalar dependências
 ```bash
-git clone [https://github.com/SEU-USUARIO/qa-automation-suite.git](https://github.com/SEU-USUARIO/qa-automation-suite.git)
-cd qa-automation-suite
+git clone [https://github.com/imelo-DEV/projects.git](https://github.com/imelo-DEV/projects.git)
+cd QA-Automation-Suite
 npm install
